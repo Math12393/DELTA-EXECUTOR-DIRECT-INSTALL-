@@ -12,6 +12,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
     }
     .container {
       background: white;
@@ -44,6 +45,25 @@
     button:hover {
       background-color: #0056b3;
     }
+    /* Notification style */
+    #notification {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      font-weight: bold;
+    }
+    #notification.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
   </style>
 </head>
 <body>
@@ -53,9 +73,12 @@
     <button id="copyBtn">Copy Text</button>
   </div>
 
+  <!-- Notification element -->
+  <div id="notification">Text copied</div>
+
   <script>
     // Get text from URL (?text=YourMessage)
-    let text = new URLSearchParams(window.location.search).get("text") || 
+    let text = new URLSearchParams(window.location.search).get("text") ||
       "itms-services://?action=download-manifest&url=https%3A%2F%2Fdeltaios-executor.com%2FInstall21.plist";
 
     // Remove any accidental trailing periods or whitespace
@@ -64,19 +87,24 @@
     const textarea = document.getElementById("sharedText");
     textarea.value = text;
 
-    // Copy text reliably on all browsers
+    const notification = document.getElementById("notification");
+
     document.getElementById("copyBtn").addEventListener("click", () => {
+      // Copy text
       textarea.select();
       textarea.setSelectionRange(0, 99999); // For mobile devices
       navigator.clipboard.writeText(textarea.value)
-        .then(() => {
-          // Optional: silently copied, no alerts
-          console.log("Text copied!");
-        })
-        .catch(err => {
-          // Fallback for older browsers
-          document.execCommand("copy");
+        .catch(() => {
+          document.execCommand("copy"); // fallback
         });
+
+      // Show notification
+      notification.classList.add("show");
+
+      // Hide after 2 seconds
+      setTimeout(() => {
+        notification.classList.remove("show");
+      }, 2000);
     });
   </script>
 </body>

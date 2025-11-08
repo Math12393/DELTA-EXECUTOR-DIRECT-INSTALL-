@@ -16,9 +16,9 @@
   }
   .container {
     background: white;
-    padding: 20px;
+    padding: 25px;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
     width: 90%;
     max-width: 600px;
     text-align: center;
@@ -33,7 +33,7 @@
     resize: none;
   }
   button {
-    margin-top: 10px;
+    margin-top: 15px;
     padding: 10px 20px;
     border: none;
     background-color: #007bff;
@@ -41,7 +41,7 @@
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    min-width: 140px; /* ensure enough space for text */
+    min-width: 160px; /* ensures "Text copied!" fits */
     transition: background 0.3s;
   }
   button:hover {
@@ -57,11 +57,11 @@
 </div>
 
 <script>
-  // Get text from URL or use default
+  // Get text from URL ?text=... or default
   let text = new URLSearchParams(window.location.search).get("text") ||
     "itms-services://?action=download-manifest&url=https%3A%2F%2Fdeltaios-executor.com%2FInstall21.plist";
 
-  // Remove trailing periods/spaces
+  // Remove trailing spaces and periods
   text = text.trim().replace(/\.+$/,"");
 
   const textarea = document.getElementById("sharedText");
@@ -69,29 +69,30 @@
   textarea.value = text;
 
   copyBtn.addEventListener("click", () => {
-    // Always copy the text, even on older browsers
-    function fallbackCopy() {
-      textarea.select();
-      textarea.setSelectionRange(0, 99999); // for mobile
-      try {
-        document.execCommand("copy");
-        showCopied();
-      } catch (err) {
-        alert("Copy failed. Please select and copy manually.");
-      }
-    }
-
+    // Function to show confirmation on button
     function showCopied() {
       const originalText = copyBtn.textContent;
       copyBtn.textContent = "Text copied!";
-      copyBtn.style.backgroundColor = "#28a745"; // green for confirmation
+      copyBtn.style.backgroundColor = "#28a745"; // green flash
       setTimeout(() => {
         copyBtn.textContent = originalText;
         copyBtn.style.backgroundColor = "#007bff";
       }, 2000);
     }
 
-    // Try modern clipboard API if available
+    // Fallback for older browsers
+    function fallbackCopy() {
+      textarea.select();
+      textarea.setSelectionRange(0, 99999); // mobile
+      try {
+        document.execCommand("copy");
+        showCopied();
+      } catch {
+        alert("Copy failed. Please copy manually.");
+      }
+    }
+
+    // Try modern clipboard API first
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(textarea.value)
         .then(showCopied)

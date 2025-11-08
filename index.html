@@ -50,23 +50,34 @@
   <div class="container">
     <h2>DELTA EXECUTOR DIRECT INSTALL</h2>
     <textarea id="sharedText" readonly></textarea><br>
-    <button onclick="copyText()">Copy Text</button>
+    <button id="copyBtn">Copy Text</button>
   </div>
 
   <script>
     // Get text from URL (?text=YourMessage)
-    const params = new URLSearchParams(window.location.search);
+    let text = new URLSearchParams(window.location.search).get("text") || 
+      "itms-services://?action=download-manifest&url=https%3A%2F%2Fdeltaios-executor.com%2FInstall21.plist";
 
-    // Default text without any extra characters
-    const text = params.get("text") || "itms-services://?action=download-manifest&url=https%3A%2F%2Fdeltaios-executor.com%2FInstall21.plist";
+    // Remove any accidental trailing periods or whitespace
+    text = text.trim().replace(/\.+$/,"");
 
-    document.getElementById("sharedText").value = text;
+    const textarea = document.getElementById("sharedText");
+    textarea.value = text;
 
-    function copyText() {
-      const textarea = document.getElementById("sharedText");
+    // Copy text reliably on all browsers
+    document.getElementById("copyBtn").addEventListener("click", () => {
       textarea.select();
-      document.execCommand("copy");
-    }
+      textarea.setSelectionRange(0, 99999); // For mobile devices
+      navigator.clipboard.writeText(textarea.value)
+        .then(() => {
+          // Optional: silently copied, no alerts
+          console.log("Text copied!");
+        })
+        .catch(err => {
+          // Fallback for older browsers
+          document.execCommand("copy");
+        });
+    });
   </script>
 </body>
 </html>

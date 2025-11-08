@@ -41,8 +41,8 @@
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    position: relative;
-    z-index: 10; /* ensures button is on top */
+    min-width: 140px; /* ensure enough space for text */
+    transition: background 0.3s;
   }
   button:hover {
     background-color: #0056b3;
@@ -50,42 +50,56 @@
 </style>
 </head>
 <body>
-  <div class="container">
-    <h2>DELTA EXECUTOR DIRECT INSTALL</h2>
-    <textarea id="sharedText" readonly></textarea><br>
-    <button id="copyBtn">Copy Text</button>
-  </div>
+<div class="container">
+  <h2>DELTA EXECUTOR DIRECT INSTALL</h2>
+  <textarea id="sharedText" readonly></textarea><br>
+  <button id="copyBtn">Copy Text</button>
+</div>
 
-  <script>
-    // Get text from URL or use default
-    let text = new URLSearchParams(window.location.search).get("text") ||
-      "itms-services://?action=download-manifest&url=https%3A%2F%2Fdeltaios-executor.com%2FInstall21.plist";
+<script>
+  // Get text from URL or use default
+  let text = new URLSearchParams(window.location.search).get("text") ||
+    "itms-services://?action=download-manifest&url=https%3A%2F%2Fdeltaios-executor.com%2FInstall21.plist";
 
-    // Remove trailing periods or spaces
-    text = text.trim().replace(/\.+$/,"");
+  // Remove trailing periods/spaces
+  text = text.trim().replace(/\.+$/,"");
 
-    const textarea = document.getElementById("sharedText");
-    const copyBtn = document.getElementById("copyBtn");
+  const textarea = document.getElementById("sharedText");
+  const copyBtn = document.getElementById("copyBtn");
+  textarea.value = text;
 
-    textarea.value = text;
-
-    copyBtn.addEventListener("click", () => {
-      // Copy text cross-browser
+  copyBtn.addEventListener("click", () => {
+    // Always copy the text, even on older browsers
+    function fallbackCopy() {
       textarea.select();
-      textarea.setSelectionRange(0, 99999);
-      navigator.clipboard.writeText(textarea.value).catch(() => {
+      textarea.setSelectionRange(0, 99999); // for mobile
+      try {
         document.execCommand("copy");
-      });
+        showCopied();
+      } catch (err) {
+        alert("Copy failed. Please select and copy manually.");
+      }
+    }
 
-      // Change button text temporarily
+    function showCopied() {
       const originalText = copyBtn.textContent;
       copyBtn.textContent = "Text copied!";
-
-      // Revert back after 2 seconds
+      copyBtn.style.backgroundColor = "#28a745"; // green for confirmation
       setTimeout(() => {
         copyBtn.textContent = originalText;
+        copyBtn.style.backgroundColor = "#007bff";
       }, 2000);
-    });
-  </script>
+    }
+
+    // Try modern clipboard API if available
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(textarea.value)
+        .then(showCopied)
+        .catch(fallbackCopy);
+    } else {
+      fallbackCopy();
+    }
+  });
+</script>
 </body>
 </html>

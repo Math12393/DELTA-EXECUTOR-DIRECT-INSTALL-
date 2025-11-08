@@ -12,7 +12,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      position: relative;
     }
     .container {
       background: white;
@@ -22,6 +21,7 @@
       width: 90%;
       max-width: 600px;
       text-align: center;
+      position: relative;
     }
     textarea {
       width: 100%;
@@ -45,24 +45,22 @@
     button:hover {
       background-color: #0056b3;
     }
-    /* Notification style */
-    #notification {
-      position: fixed;
-      bottom: 20px;
+    /* Inline popup notification */
+    #popup {
+      position: absolute;
+      bottom: -40px;
       left: 50%;
       transform: translateX(-50%);
-      background-color: #4CAF50;
+      background: #4CAF50;
       color: white;
-      padding: 10px 20px;
+      padding: 5px 15px;
       border-radius: 5px;
+      font-size: 14px;
       opacity: 0;
-      pointer-events: none;
       transition: opacity 0.3s;
-      font-weight: bold;
     }
-    #notification.show {
+    #popup.show {
       opacity: 1;
-      pointer-events: auto;
     }
   </style>
 </head>
@@ -71,39 +69,36 @@
     <h2>DELTA EXECUTOR DIRECT INSTALL</h2>
     <textarea id="sharedText" readonly></textarea><br>
     <button id="copyBtn">Copy Text</button>
+    <div id="popup">Text copied</div>
   </div>
-
-  <!-- Notification element -->
-  <div id="notification">Text copied</div>
 
   <script>
     // Get text from URL (?text=YourMessage)
     let text = new URLSearchParams(window.location.search).get("text") ||
       "itms-services://?action=download-manifest&url=https%3A%2F%2Fdeltaios-executor.com%2FInstall21.plist";
 
-    // Remove any accidental trailing periods or whitespace
+    // Remove trailing periods/spaces
     text = text.trim().replace(/\.+$/,"");
 
     const textarea = document.getElementById("sharedText");
     textarea.value = text;
 
-    const notification = document.getElementById("notification");
+    const popup = document.getElementById("popup");
 
     document.getElementById("copyBtn").addEventListener("click", () => {
-      // Copy text
+      // Copy text cross-browser
       textarea.select();
-      textarea.setSelectionRange(0, 99999); // For mobile devices
-      navigator.clipboard.writeText(textarea.value)
-        .catch(() => {
-          document.execCommand("copy"); // fallback
-        });
+      textarea.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(textarea.value).catch(() => {
+        document.execCommand("copy");
+      });
 
-      // Show notification
-      notification.classList.add("show");
+      // Show inline popup
+      popup.classList.add("show");
 
       // Hide after 2 seconds
       setTimeout(() => {
-        notification.classList.remove("show");
+        popup.classList.remove("show");
       }, 2000);
     });
   </script>

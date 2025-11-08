@@ -12,6 +12,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
     }
     .container {
       background: white;
@@ -21,7 +22,7 @@
       width: 90%;
       max-width: 600px;
       text-align: center;
-      position: relative;
+      margin-bottom: 50px; /* space for popup */
     }
     textarea {
       width: 100%;
@@ -45,17 +46,13 @@
     button:hover {
       background-color: #0056b3;
     }
-    /* Inline popup notification */
+    /* Inline popup notification below container */
     #popup {
-      position: absolute;
-      bottom: -40px;
-      left: 50%;
-      transform: translateX(-50%);
       background: #4CAF50;
       color: white;
-      padding: 5px 15px;
+      padding: 10px 20px;
       border-radius: 5px;
-      font-size: 14px;
+      font-size: 16px;
       opacity: 0;
       transition: opacity 0.3s;
     }
@@ -69,15 +66,15 @@
     <h2>DELTA EXECUTOR DIRECT INSTALL</h2>
     <textarea id="sharedText" readonly></textarea><br>
     <button id="copyBtn">Copy Text</button>
-    <div id="popup">Text copied</div>
   </div>
 
+  <!-- Popup below container -->
+  <div id="popup">Text copied</div>
+
   <script>
-    // Get text from URL (?text=YourMessage)
     let text = new URLSearchParams(window.location.search).get("text") ||
       "itms-services://?action=download-manifest&url=https%3A%2F%2Fdeltaios-executor.com%2FInstall21.plist";
 
-    // Remove trailing periods/spaces
     text = text.trim().replace(/\.+$/,"");
 
     const textarea = document.getElementById("sharedText");
@@ -86,14 +83,13 @@
     const popup = document.getElementById("popup");
 
     document.getElementById("copyBtn").addEventListener("click", () => {
-      // Copy text cross-browser
       textarea.select();
       textarea.setSelectionRange(0, 99999);
       navigator.clipboard.writeText(textarea.value).catch(() => {
         document.execCommand("copy");
       });
 
-      // Show inline popup
+      // Show popup
       popup.classList.add("show");
 
       // Hide after 2 seconds

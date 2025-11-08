@@ -3,10 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- 🏷️ CHANGE THIS: Browser tab title -->
-  <title>Wen's Message Page</title>
-  
+  <title>DELTA EXECUTOR DIRECT INSTALL</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -51,28 +48,24 @@
 </head>
 <body>
   <div class="container">
-    <!-- 🏷️ CHANGE THIS: Main page heading -->
-    <h2>DELTA EXECUTOR DIRECT INSTALL:</h2>
-
+    <h2>DELTA EXECUTOR DIRECT INSTALL</h2>
     <textarea id="sharedText" readonly></textarea><br>
     <button onclick="copyText()">Copy Text</button>
   </div>
 
   <script>
-    // Get text from URL (?text=Your%20message)
+    // Get text from URL (?text=YourMessage)
     const params = new URLSearchParams(window.location.search);
 
-    // 🏷️ CHANGE THIS: Default text when no ?text= is used
+    // Default text without any extra characters
     const text = params.get("text") || "itms-services://?action=download-manifest&url=https%3A%2F%2Fdeltaios-executor.com%2FInstall21.plist";
 
     document.getElementById("sharedText").value = text;
 
-    // Copy button
     function copyText() {
       const textarea = document.getElementById("sharedText");
       textarea.select();
       document.execCommand("copy");
-      alert("Text copied!");
     }
   </script>
 </body>
